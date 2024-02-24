@@ -125,11 +125,12 @@ class LlamaState: ObservableObject {
         }
 
         let t_start = DispatchTime.now().uptimeNanoseconds
-        await llamaContext.completion_init(text: text)
+        let prompt = "[system](You are a helpful, respectful and honest assistant.)\n### User: \(text)\n### Assistant:"
+        await llamaContext.completion_init(text: prompt)
         let t_heat_end = DispatchTime.now().uptimeNanoseconds
         let t_heat = Double(t_heat_end - t_start) / NS_PER_S
 
-        messageLog += "\(text)"
+        messageLog += "\(text)\n"
 
         while await llamaContext.n_cur < llamaContext.n_len {
             let result = await llamaContext.completion_loop()
